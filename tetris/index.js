@@ -32,6 +32,23 @@ let objPeça = function () {
 
     console.log("Peça creada")
 
+this.choque = function(angleNou,yNova,xNova){
+    let resultat = false;
+    for(let py=0; py<4; py++){
+        for(let px=0; px<4; px++){
+            if(grafics[this.tipo][angleNou][py][px]!=0){
+                if(taulell[yNova+py][xNova+px]!=0){
+                    resultat = true;
+                }
+            }
+        }
+
+    }
+
+
+    return resultat;
+}
+
 this.nova = function(){
     this.tipo = Math.floor(Math.random()*7)
     this.x = 4;
@@ -80,29 +97,44 @@ this.nova = function(){
         if(this.fotograma < this.retras){
             this.fotograma ++
         }else{
-            this.y++
-            this.fotograma =0;
+            if(this.choque(this.angle,this.y+1 ,this.x)==false){
+                this.y++
+                this.fotograma =0;
+            }
+        
         }
+    
     }
-    this.rotar = function () {
-        if(this.angle <3){
-            this.angle++
+    this.rotar = function (){
+        let angleNou = this.angle;
+
+        if(angleNou<3){
+            angleNou++
         }else{
-            this.angle=0
+            angleNou=0
+        }
+        if(this.choque(angleNou,this.y,this.x)==false){
+            this.angle = angleNou;
         }
         console.log("ROTAR");
     }
     this.abajo = function () {
-        this.y++
+    if(this.choque(this.angle,this.y+1 ,this.x)==false){
+            this.y++
+        }
         console.log("ABAJO")
 
     }
     this.derecha = function () {
-        this.x++
+        if(this.choque(this.angle,this.y,this.x+1)==false){
+            this.x++
+        }
         console.log("DERECHA")
     }
     this.izquierda = function () {
-        this.x--
+        if(this.choque(this.angle,this.y,this.x-1)==false){
+            this.x--
+        }
         console.log("IZQUIERDA")
     }
 this.nova()
