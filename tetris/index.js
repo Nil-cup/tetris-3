@@ -52,7 +52,7 @@ this.choque = function(angleNou,yNova,xNova){
 this.nova = function(){
     this.tipo = Math.floor(Math.random()*7)
     this.x = 4;
-    this.y = 5;
+    this.y = 0;
 }
 
 
@@ -100,10 +100,24 @@ this.nova = function(){
             if(this.choque(this.angle,this.y+1 ,this.x)==false){
                 this.y++
                 this.fotograma =0;
+            }else{
+                this.fixarPeça();
+                this.nova();
+
             }
         
         }
     
+    }
+
+    this.fixarPeça = function(){
+        for(let py=0; py<4; py++){
+            for(let px=0; px<4; px++){
+                if(grafics[this.tipo][this.angle][py][px] >0){
+                    taulell[this.y+py][this.x+px] = grafics[this.tipo][this.angle][py][px]
+                }
+            }
+        }
     }
     this.rotar = function (){
         let angleNou = this.angle;
