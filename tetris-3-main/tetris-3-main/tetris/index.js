@@ -10,7 +10,7 @@ let altF = 40;
 
 let ampleTaulell = 10;
 let altTaulell = 20;
-
+let score = 0;
 
 
 let vermell = "#e30e00";
@@ -32,28 +32,28 @@ let objPeça = function () {
 
     console.log("Peça creada")
 
-this.choque = function(angleNou,yNova,xNova){
-    let resultat = false;
-    for(let py=0; py<4; py++){
-        for(let px=0; px<4; px++){
-            if(grafics[this.tipo][angleNou][py][px]!=0){
-                if(taulell[yNova+py][xNova+px]!=0){
-                    resultat = true;
+    this.choque = function (angleNou, yNova, xNova) {
+        let resultat = false;
+        for (let py = 0; py < 4; py++) {
+            for (let px = 0; px < 4; px++) {
+                if (grafics[this.tipo][angleNou][py][px] != 0) {
+                    if (taulell[yNova + py][xNova + px] != 0) {
+                        resultat = true;
+                    }
                 }
             }
+
         }
 
+
+        return resultat;
     }
 
-
-    return resultat;
-}
-
-this.nova = function(){
-    this.tipo = Math.floor(Math.random()*7)
-    this.x = 4;
-    this.y = 0;
-}
+    this.nova = function () {
+        this.tipo = Math.floor(Math.random() * 7)
+        this.x = 4;
+        this.y = 0;
+    }
 
 
 
@@ -91,67 +91,108 @@ this.nova = function(){
 
     }
 
-    this.retras = 50;
-    this.fotograma = 0;
-    this.caure = function(){
-        if(this.fotograma < this.retras){
-            this.fotograma ++
-        }else{
-            if(this.choque(this.angle,this.y+1 ,this.x)==false){
-                this.y++
-                this.fotograma =0;
-            }else{
-                this.fixarPeça();
-                this.nova();
-
+    this.gameOver = function () {
+        let gameOver = false
+        for (px = 1; px <= ampleTaulell; px++) {
+            if (taulell[2][px] > 0) {
+                gameOver = true;
             }
-        
+
         }
-    
+        console.log(gameOver)
+        return gameOver;
     }
 
-    this.fixarPeça = function(){
-        for(let py=0; py<4; py++){
-            for(let px=0; px<4; px++){
-                if(grafics[this.tipo][this.angle][py][px] >0){
-                    taulell[this.y+py][this.x+px] = grafics[this.tipo][this.angle][py][px]
+    this.fila = function () {
+        let filaFeta;
+
+        for (py = 4; py < altTaulell; py++) {
+
+            filaFeta = true
+            for (px = 1; px <= altTaulell; px++) {
+
+                if (taulell[py][px] == 0) {
+                    filaFeta = false;
+                }
+            }
+            if (filaFeta == true) {
+                score++
+                for (px = 1; px < altTaulell; px++) {
+                    taulell[py][px] = 0;
                 }
             }
         }
     }
-    this.rotar = function (){
+
+    this.retras = 50;
+    this.fotograma = 0;
+    this.caure = function () {
+        if (this.fotograma < this.retras) {
+            this.fotograma++
+        } else {
+            if (this.choque(this.angle, this.y + 1, this.x) == false) {
+                this.y++
+                this.fotograma = 0;
+            } else {
+                this.fixarPeça();
+                if (this.gameOver()) {
+                    recarrega();
+                }
+                this.nova();
+
+                
+
+            }
+
+        }
+
+    }
+
+    this.fixarPeça = function () {
+        for (let py = 0; py < 4; py++) {
+            for (let px = 0; px < 4; px++) {
+                if (grafics[this.tipo][this.angle][py][px] > 0) {
+                    taulell[this.y + py][this.x + px] = grafics[this.tipo][this.angle][py][px]
+                }
+            }
+        }
+    }
+    this.rotar = function () {
         let angleNou = this.angle;
 
-        if(angleNou<3){
+        if (angleNou < 3) {
             angleNou++
-        }else{
-            angleNou=0
+        } else {
+            angleNou = 0
         }
-        if(this.choque(angleNou,this.y,this.x)==false){
+        if (this.choque(angleNou, this.y, this.x) == false) {
             this.angle = angleNou;
         }
         console.log("ROTAR");
     }
     this.abajo = function () {
-    if(this.choque(this.angle,this.y+1 ,this.x)==false){
+        if (this.choque(this.angle, this.y + 1, this.x) == false) {
             this.y++
         }
         console.log("ABAJO")
 
     }
     this.derecha = function () {
-        if(this.choque(this.angle,this.y,this.x+1)==false){
+        if (this.choque(this.angle, this.y, this.x + 1) == false) {
             this.x++
         }
         console.log("DERECHA")
     }
     this.izquierda = function () {
-        if(this.choque(this.angle,this.y,this.x-1)==false){
+        if (this.choque(this.angle, this.y, this.x - 1) == false) {
             this.x--
         }
         console.log("IZQUIERDA")
     }
-this.nova()
+    this.nova()
+}
+function recarrega() {
+    document.location.reload()
 }
 
 
@@ -403,9 +444,9 @@ let taulell = [
 ]
 
 function dibuixaTaulell() {
-    for (let py = 0; py < altTaulell; py++) {
+    for (let py = 0; py <= altTaulell; py++) {
 
-        for (let px = 0; px < ampleTaulell; px++) {
+        for (let px = 0; px <= ampleTaulell; px++) {
 
             ctx.fillStyle = '#FFFFFF';
 
@@ -442,6 +483,8 @@ function principal() {
     dibuixaTaulell();
     peça.dibuixa();
     peça.caure();
+    ctx.fillText("Score", 10, 10);
+
 }
 
 function borrarPantalla() {
